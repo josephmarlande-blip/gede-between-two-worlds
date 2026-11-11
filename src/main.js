@@ -7,9 +7,9 @@ intro.id = 'cinematic-intro';
 intro.innerHTML = `
   <div class="intro-content">
     <div class="intro-eyebrow">A JOURNEY BEYOND THE VISIBLE</div>
-    <h1 class="intro-title">GEDE</h1>
+    <h1 class="intro-title">BETWEEN TWO WORLDS</h1>
     <div class="intro-line"></div>
-    <p class="intro-subtitle">Between Two Worlds</p>
+  
     <p class="intro-description">
       Where mystery, memory and movement meet.
     </p>
@@ -57,8 +57,8 @@ scene.querySelector('#continue-film').addEventListener('click', () => {
 document.querySelector('#app').innerHTML = `
   <main class="gede">
     <header class="gede-header">
-      <span class="brand">GEDE</span>
-      <span class="edition">BETWEEN TWO WORLDS</span>
+    <span class="brand">BETWEEN TWO WORLDS</span>
+    <span class="edition">BETWEEN TWO WORLDS</span>
     </header>
 
     <section class="player-section">
@@ -71,13 +71,13 @@ document.querySelector('#app').innerHTML = `
 
       <video-player
       id="gede-player"
-      poster="https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=1200"
+      poster="/assets/Élégance%20pourpre%20dans%20les%20ruines%20embrumées.png"
     >
       <video-skin>
         <video
           playsinline
           preload="metadata"
-         src="https://vjs.zencdn.net/v/oceans.mp4"
+          src="https://gede-between-two-worlds.netlify.app/assets/Mystery_vid%C3%A9o.js%20challenge%20%282%29.mp4"
 
         ></video>
       </video-skin>
