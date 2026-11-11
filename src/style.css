@@ -221,10 +221,13 @@ video {
 .gede-scene-image {
   position: absolute;
   inset: 0;
-  background-image: url('/assets/gede-robe-legere.gif');
+  background-image: url('https://gede-between-two-worlds.netlify.app/assets/Between_Two_Worlds_Intro.gif');   
   background-size: cover;
   background-position: center;
-  animation: cinematicZoom 14s ease-out both;
+  opacity: 1 !important;
+visibility: visible !important;
+z-index: 0;
+animation: cinematicZoom 14s ease-out both;
 }
 
 .gede-scene-overlay {
