@@ -334,6 +334,38 @@ gedeStyle.textContent = `
 .media-skin .media-time-slider-chapters {
   display: none !important;
 }
+
+/* Bouton Lecture/Pause : flamme dorée */
+.media-skin media-play-button {
+  position: relative;
+  color: #f5c66b;
+  filter: drop-shadow(0 0 5px rgba(255, 170, 45, 0.65));
+  animation: gedeFlame 1.5s ease-in-out infinite alternate;
+  transform-origin: center bottom;
+}
+
+.media-skin media-play-button:hover {
+  filter: drop-shadow(0 0 12px rgba(255, 190, 65, 0.95));
+}
+
+/* Remplacer les icônes par une flamme */
+.media-skin media-play-button .media-button-icon {
+  display: none !important;
+}
+
+
+
+@keyframes gedeFlame {
+  from {
+    transform: scale(0.96) rotate(-2deg);
+    opacity: 0.85;
+  }
+  to {
+    transform: scale(1.08) rotate(2deg);
+    opacity: 1;
+  }
+}
+
 `;
 
 
@@ -341,6 +373,44 @@ gedeStyle.textContent = `
 
 
   gedeSkin.shadowRoot.appendChild(gedeStyle);
+
+/* Flamme animée du bouton Lecture/Pause */
+const playButton = gedeSkin.shadowRoot.querySelector(
+  'media-play-button'
+);
+
+if (playButton && !playButton.querySelector('.gede-play-fire')) {
+  const playFire = document.createElement('img');
+
+  playFire.className = 'gede-play-fire';
+  playFire.src =
+    'https://gede-between-two-worlds.netlify.app/assets/Animation%20de%20flammes%20en%20losange.gif';
+
+  playFire.alt = '';
+  playFire.setAttribute('aria-hidden', 'true');
+
+  playFire.style.cssText = `
+  
+
+display: block;
+width: 52px;
+height: 52px;
+min-width: 52px;
+max-width: none;
+object-fit: contain;
+position: absolute;
+top: 50%;
+left: 50%;
+transform: translate(-50%, -50%);
+pointer-events: none;
+z-index: 10;
+
+
+  `;
+
+  playButton.appendChild(playFire);
+}
+
   // REAL FIRE — Vidéo de flammes
 const fireSlider = gedeSkin.shadowRoot.querySelector('media-time-slider');
 
