@@ -366,6 +366,49 @@ gedeStyle.textContent = `
   }
 }
 
+
+
+/* Volume : préparation des étincelles */
+.media-skin media-mute-button {
+  color: #f5c66b;
+  position: relative;
+  overflow: visible;
+}
+ition: filter 0.2s ease;
+}
+
+/* Étincelles animées autour du volume */
+.media-skin media-mute-button .gede-spark {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: #ffd36a;
+  box-shadow: 0 0 5px #ffae32;
+  pointer-events: none;
+  opacity: 0;
+  z-index: 10;
+  animation: gedeSpark 0.9s ease-out infinite;
+  animation-delay: var(--spark-delay, 0s);
+}
+
+@keyframes gedeSpark {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) scale(0.4);
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform:
+      translate(var(--spark-x), var(--spark-y))
+      scale(0.1);
+  }
+}
+
+
 `;
 
 
@@ -373,6 +416,102 @@ gedeStyle.textContent = `
 
 
   gedeSkin.shadowRoot.appendChild(gedeStyle);
+
+/* Volume : synchronisation de la lueur dorée */
+const volumeButton = gedeSkin.shadowRoot.querySelector(
+  'media-mute-button'
+);
+
+const videoForVolume = gedeSkin.querySelector('video');
+
+if (volumeButton && videoForVolume) {
+  const updateVolumeGlow = () => {
+    const level = videoForVolume.muted
+      ? 0
+      : videoForVolume.volume;
+
+/* Nombre d'étincelles selon le volume */
+const sparkCount = level === 0
+  ? 0
+  : Math.max(1, Math.ceil(level * 12));
+
+volumeButton.querySelectorAll('.gede-spark').forEach(
+  (spark, index) => {
+    spark.style.display = index < sparkCount
+      ? 'block'
+      : 'none';
+  }
+);
+
+    volumeButton.style.setProperty(
+      '--gede-volume-glow',
+      String(level)
+    );
+
+  };
+
+  videoForVolume.addEventListener(
+    'volumechange',
+    updateVolumeGlow
+  );
+  updateVolumeGlow();
+  volumeButton.addEventListener('gede-sparks-ready', updateVolumeGlow);
+}
+
+
+
+/* Création des étincelles du volume */
+if (volumeButton && videoForVolume &&
+  !volumeButton.querySelector('.gede-spark')) {
+
+for (let i = 0; i < 12; i++) {
+  const spark = document.createElement('span');
+  spark.className = 'gede-spark';
+  spark.style.cssText = `
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #ffcc00;
+  box-shadow: 0 0 8px #ff9900;
+  z-index: 100;
+  pointer-events: none;
+
+left: 50%;
+top: 50%;
+transform: translate(-50%, -50%);
+
+`;
+  const angle = (Math.PI * 2 * i) / 12;
+  const distance = 12 + (i % 3) * 5;
+
+  spark.style.setProperty(
+    '--spark-x',
+    `${Math.cos(angle) * distance}px`
+  );
+
+  spark.style.setProperty(
+    '--spark-y',
+    `${Math.sin(angle) * distance}px`
+  );
+
+  spark.style.setProperty(
+    '--spark-delay',
+    `${i * -0.13}s`
+  );
+
+
+  spark.style.left = '50%';
+  spark.style.top = '50%';
+  spark.style.animation = 'gedeSpark 0.9s ease-out infinite';
+  spark.style.animationDelay = `${i * -0.13}s`;
+  
+
+  volumeButton.appendChild(spark);
+}
+}
+volumeButton?.dispatchEvent(new Event('gede-sparks-ready'));
+ 
 
 /* Flamme animée du bouton Lecture/Pause */
 const playButton = gedeSkin.shadowRoot.querySelector(
