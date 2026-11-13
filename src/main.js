@@ -408,6 +408,31 @@ ition: filter 0.2s ease;
   }
 }
 
+/* Boule de feu animée — bouton Paramètres */
+.media-skin media-settings-menu-trigger {
+  position: relative;
+}
+
+.media-skin media-settings-menu-trigger media-icon {
+  display: none !important;
+}
+
+.media-skin media-settings-menu-trigger::after {
+  content: "";
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-image: url("/assets/placidplace-flame-13090.gif");
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  pointer-events: none;
+}
+
+
 
 `;
 
@@ -416,6 +441,168 @@ ition: filter 0.2s ease;
 
 
   gedeSkin.shadowRoot.appendChild(gedeStyle);
+  console.log(
+    'Bouton Plein écran :',
+    gedeSkin.shadowRoot.querySelector('media-fullscreen-button')
+  );
+ /* Lance-flammes — bouton Plein écran */
+const fullscreenButton = gedeSkin.shadowRoot.querySelector(
+  'media-fullscreen-button'
+);
+
+if (fullscreenButton) {
+  fullscreenButton.addEventListener('click', () => {
+    const rect = fullscreenButton.getBoundingClientRect();
+
+    const blast = document.createElement('video');
+    blast.crossOrigin = 'anonymous';
+    blast.src = 'https://raw.githubusercontent.com/josephmarlande-blip/gede-between-two-worlds/main/public/assets/fullscreen-fire.mp4';
+    blast.autoplay = true;
+    blast.muted = true;
+    blast.playsInline = true;
+    const fireCanvas = document.createElement('canvas');
+fireCanvas.width = 170;
+fireCanvas.height = 460;
+
+const fireCtx = fireCanvas.getContext('2d', {
+  willReadFrequently: true
+});function drawTransparentFire() {
+  if (blast.readyState < 2 || blast.paused) return;
+
+  try {
+    fireCtx.drawImage(blast, 0, 0, fireCanvas.width, fireCanvas.height);
+
+    const frame = fireCtx.getImageData(
+      0, 0, fireCanvas.width, fireCanvas.height
+    );
+
+    const pixels = frame.data;
+
+    for (let i = 0; i < pixels.length; i += 4) {
+      const brightness = Math.max(
+        pixels[i],
+        pixels[i + 1],
+        pixels[i + 2]
+      );
+
+      pixels[i + 3] = Math.min(
+        255,
+        Math.max(0, (brightness - 25) * 3)
+      );
+    }
+
+    fireCtx.putImageData(frame, 0, 0);
+  } catch (error) {
+    console.error('Erreur de transparence des flammes :', error);
+    return;
+  }
+
+  requestAnimationFrame(drawTransparentFire);
+}
+    blast.style.cssText = `
+      position: fixed;
+      left: ${rect.left + rect.width / 2}px;
+      top: ${rect.top + rect.height / 2}px;
+      width: 123px;
+      height: 334px;
+      transform: translate(-50%, -90%) scaleY(0.1);
+      transform-origin: center bottom;
+      pointer-events: none;
+      z-index: 2147483647;
+      object-fit: fill;
+      mix-blend-mode: screen;
+      background: transparent;
+    `;
+
+    const flameContainer = document.fullscreenElement || gedeSkin;
+    blast.play().then(() => {
+      drawTransparentFire();
+    }).catch(error => console.error('Lecture des flammes :', error));
+    fireCanvas.style.cssText = blast.style.cssText;
+    flameContainer.appendChild(fireCanvas);
+    fireCanvas.animate(      [
+        {
+          transform: 'translate(-50%, -15%) scale(0.3, 0.1)',
+          opacity: 0
+        },
+        {
+          transform: 'translate(-50%, -75%) scale(1, 1)',
+          opacity: 1,
+          offset: 0.25
+        },
+        {
+          transform: 'translate(-50%, -105%) scale(1.2, 1.35)',
+          opacity: 0.9,
+          offset: 0.7
+        },
+        {
+          transform: 'translate(-50%, -135%) scale(0.5, 1.6)',
+          opacity: 0
+        }
+      ],
+      {
+        duration: 1500,
+        easing: 'ease-out'
+      }
+    ).onfinish = () => blast.remove();
+  });
+}
+
+
+  const settingsButton = gedeSkin.shadowRoot.querySelector(
+    '.media-settings-menu-trigger'
+  );
+  console.log('Bouton Paramètres trouvé :', settingsButton);
+  if (settingsButton && !settingsButton.querySelector('.gede-settings-fire')) {
+    const settingsFire = document.createElement('img');
+  
+    settingsFire.className = 'gede-settings-fire';
+    settingsFire.src = 'https://gede-between-two-worlds.netlify.app/assets/placidplace-flame-13090.gif';
+    settingsFire.alt = '';
+    settingsFire.setAttribute('aria-hidden', 'true');
+  
+    settingsButton.style.position = 'relative';
+    console.log('Bouton Paramètres :', settingsButton);
+    console.log('Image de feu :', settingsFire.src);
+    settingsFire.style.cssText = `
+      display: block;
+      position: absolute;
+      width: 52px;
+      height: 52px;
+      max-width: none;
+      object-fit: contain;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      z-index: 10;
+      /* Masquer l'engrenage natif derrière la boule de feu */
+.media-skin .video-controls-settings-button > media-icon {
+  display: none !important;
+}
+    `;
+  
+    settingsButton.appendChild(settingsFire);
+    const gearIcon = settingsButton.querySelector('media-icon');
+
+if (gearIcon) {
+  gearIcon.style.display = 'none';
+}
+  }
+  
+  console.log(
+    'Boutons Paramètres :',
+    gedeSkin.shadowRoot.querySelectorAll(
+      'media-settings-menu-trigger, media-settings-button'
+    )
+  );
+  
+  console.log(
+    'Boutons dans le lecteur :',
+    gedeSkin.querySelectorAll(
+      'media-settings-menu-trigger, media-settings-button'
+    )
+  );
 
 /* Volume : synchronisation de la lueur dorée */
 const volumeButton = gedeSkin.shadowRoot.querySelector(
