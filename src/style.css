@@ -319,3 +319,10 @@ body.gede-ready #app {
 #gede-player video-skin {
   --media-controls-foreground-color: #d8b77a;
 }
+/* Introduction adaptée aux petits écrans */
+/* Introduction sur petits écrans */
+@media (max-width: 1024px), (max-height: 750px) {
+  #cinematic-intro .intro-content {
+    zoom: 0.65;
+  }
+}
